@@ -5,6 +5,9 @@ set -ex
 [[ -f /etc/os-release ]] && . /etc/os-release
 if [[ "$NAME" == "Ubuntu" ]] && [[ $VERSION_ID > 20 ]]; then
   echo "I: Installing on $NAME $VERSION_ID."
+elif [[ "$NAME" == "CentOS Linux" ]] && [[ $VERSION_ID > 7 ]]; then
+  echo "I: Installing on $NAME $VERSION_ID."
+  dnf install -y sudo tar dotnet-sdk-5.0
 else
   echo "E: Unsupported Operating System!"
   exit 1
@@ -15,14 +18,15 @@ function user_add() {
   username=$1
   if ! [[ $(getent passwd $username)  ]]; then
     echo "Adding user $username"
-    sudo adduser \
-      --system \
-      --shell /bin/bash \
-      --gecos "Github actions runner user" \
-      --group \
-      --disabled-password \
-      --home /home/actions-runner \
-      $username
+    useradd -m $username
+    #sudo adduser \
+    #  --system \
+    #  --shell /bin/bash \
+    #  --gecos "Github actions runner user" \
+    #  --group \
+    #  --disabled-password \
+    #  --home /home/actions-runner \
+    #  $username
 
   fi
 }
